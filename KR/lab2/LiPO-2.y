@@ -1,0 +1,57 @@
+%{
+#include <stdio.h>
+#include "y.tab.h"
+
+
+void yyerror(const char *str)
+{
+    fprintf(stderr, "error: %s\n",str);
+}
+
+int yywrap()
+{
+    return 1;
+}
+
+main()
+{
+    yyparse();
+}
+
+%}
+
+%token CONST BG ND KEY_VAR IDENTIFIER SEMICOLON COMMA SIGN MINUS ADD MULTIPLY DIV OPBRACKET ENBRACKET DOT
+
+%%
+PROGRAM: VARS OPS DOT
+;
+
+OPS: BG OPS_LIST ND
+;
+
+VARS: KEY_VAR VAR_LIST
+;
+
+VAR_LIST: IDENTIFIER | IDENTIFIER COMMA VAR_LIST
+;
+
+OPS_LIST: ASSIGNMENT | ASSIGNMENT OPS_LIST
+;
+
+ASSIGNMENT: IDENTIFIER SIGN EXPRESSION
+;
+
+EXPRESSION: UNAR SUBEXPR | SUBEXPR
+;
+
+SUBEXPR: OPBRACKET EXPRESSION ENBRACKET | OPERAND | SUBEXPR BINAR SUBEXPR
+;
+
+UNAR: MINUS
+;
+
+BINAR: MINUS | ADD | MULTIPLY | DIV
+;
+
+OPERAND: IDENTIFIER | CONST
+;
